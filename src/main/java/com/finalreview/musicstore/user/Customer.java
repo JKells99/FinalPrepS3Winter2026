@@ -1,4 +1,4 @@
-package com.finalreview.musicstore.product;
+package com.finalreview.musicstore.user;
 
 public class Customer  extends User{
     public Customer(String username, String password, String email) {
