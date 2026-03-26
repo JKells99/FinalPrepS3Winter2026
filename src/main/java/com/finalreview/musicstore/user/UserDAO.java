@@ -1,4 +1,4 @@
-package com.finalreview.musicstore.product;
+package com.finalreview.musicstore.user;
 
 import com.finalreview.musicstore.database.DBConnection;
 
@@ -21,6 +21,7 @@ public class UserDAO {
 
         }
     }
+
     public User getByUserName(String userName) throws SQLException {
         String sql = "SELECT * FROM users WHERE username = ?";
         try (var connection = DBConnection.getConnection();

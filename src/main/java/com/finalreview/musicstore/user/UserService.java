@@ -1,4 +1,4 @@
-package com.finalreview.musicstore.product;
+package com.finalreview.musicstore.user;
 
 import org.mindrot.jbcrypt.BCrypt;
 

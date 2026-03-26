@@ -1,9 +1,12 @@
 package com.finalreview.musicstore;
 
-import com.finalreview.musicstore.product.Customer;
-import com.finalreview.musicstore.product.Employee;
-import com.finalreview.musicstore.product.User;
-import com.finalreview.musicstore.product.UserService;
+import com.finalreview.musicstore.product.Accessory;
+import com.finalreview.musicstore.product.Instrument;
+import com.finalreview.musicstore.product.ProductDAO;
+import com.finalreview.musicstore.product.ProductService;
+import com.finalreview.musicstore.user.Employee;
+import com.finalreview.musicstore.user.User;
+import com.finalreview.musicstore.user.UserService;
 
 import java.sql.SQLException;
 
@@ -11,12 +14,18 @@ public class MusicStoreTest {
     public static void main(String[] args) throws SQLException {
         UserService userService = new UserService();
 
+        ProductService productService = new ProductService();
 
         // Customer user = new Customer("username3", "password4", "j@j3.com");
         Employee emp2 = new Employee("username4", "password5", "emp@emp.com");
 
-
         userService.saveNewUser(emp2);
+
+        Instrument instrument = new Instrument("Fender Strat","6 String Fender Electric",1199.00,30,"Guitar","Fender",6,"Black");
+        Accessory accessory = new Accessory("Guitar Strings","D'Addario Nickel Wound",9.99,100,"Strings","D'Addario");
+
+        productService.getAllInstruments();
+
 
         User user = userService.logInToSystem("username4", "password5");
 

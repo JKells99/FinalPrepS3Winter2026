@@ -1,4 +1,4 @@
-package com.finalreview.musicstore.product;
+package com.finalreview.musicstore.user;
 
 // Super Class for any people in the system
 public class User {
