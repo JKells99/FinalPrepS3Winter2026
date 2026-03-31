@@ -2,6 +2,8 @@ package com.finalreview.musicstore.product;
 
 import com.finalreview.musicstore.database.DBConnection;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,24 +69,77 @@ public class ProductDAO {
         }
     }
 
+//    public List<Product> getAllProductsRepeat() {
+//        String sql = "SELECT * FROM products p LEFT JOIN instruments i ON p.product_id = i.product_id LEFT JOIN accessories a ON p.product_id = a.product_id";
+//        List<Product> products = new ArrayList<>();
+//        try (var connection = DBConnection.getConnection();
+//             var stmt = connection.prepareStatement(sql);
+//             var rs = stmt.executeQuery()) {
+//            while (rs.next()) {
+//                if (rs.getString("instrument_type") != null) {
+//                    products.add(new Instrument(
+//                            rs.getInt("product_id"),
+//                            rs.getString("product_name"),
+//                            rs.getString("product_description"),
+//                            rs.getDouble("product_price"`),
+//                            rs.getInt("product_stock"),)
+//
+//
+//    }
+
+    // Change it up a bit
+    @FunctionalInterface
+    private interface RowMapper<T> {
+        T map(ResultSet rs) throws SQLException;
+    }
+
+    private <T extends Product> List<T> fetchList(String sql, RowMapper<T> mapper) {
+        List<T> list = new ArrayList<>();
+        try (var connection = DBConnection.getConnection();
+             var stmt = connection.prepareStatement(sql);
+             var rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                list.add(mapper.map(rs));
+            }
+        } catch (SQLException e) {
+            System.err.println("Database Error: " + e.getMessage());
+        }
+        return list;
+    }
 
     public List<Instrument> getAllInstruments() {
-        String sql = "SELECT * FROM instruments JOIN products ON instruments.product_id = products.product_id";
-        List<Instrument> instruments = new ArrayList<>();
-        try (var connection = DBConnection.getConnection();
-             var stmt = connection.prepareStatement(sql)) {
-            var rs = stmt.executeQuery();
-            if (rs.next()) {
-                Instrument instrument=  new Instrument(rs.getString("instrument_type"), rs.getString("instrument_brand"), rs.getInt("number_of_strings"), rs.getString("instrument_color"));
-                instruments.add(instrument);
+        String sql = "SELECT * FROM products p JOIN instruments i ON p.product_id = i.product_id";
+        return fetchList(sql, this::mapRowToInstrument);
+    }
 
-            }
-            return instruments;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public List<Accessory> getAllAccessories() {
+        String sql = "SELECT * FROM products p JOIN accessories a ON p.product_id = a.product_id";
+        return fetchList(sql, this::mapRowToAccessory);
+    }
 
+    private Instrument mapRowToInstrument(ResultSet rs) throws SQLException {
+        return new Instrument(
+                rs.getInt("product_id"),
+                rs.getString("product_name"),
+                rs.getString("product_description"),
+                rs.getDouble("product_price"),
+                rs.getInt("product_stock"),
+                rs.getString("instrument_type"),
+                rs.getString("instrument_brand"),
+                rs.getInt("number_of_strings"),
+                rs.getString("instrument_color")
+        );
+    }
 
-    return null;
+    private Accessory mapRowToAccessory(ResultSet rs) throws SQLException {
+        return new Accessory(
+                rs.getInt("product_id"),
+                rs.getString("product_name"),
+                rs.getString("product_description"),
+                rs.getDouble("product_price"),
+                rs.getInt("product_stock"),
+                rs.getString("accessory_type"),
+                rs.getString("accessory_brand")
+        );
     }
 }
