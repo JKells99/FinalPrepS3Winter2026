@@ -27,12 +27,35 @@ public class ProductService {
         System.out.println("Accessory saved to database: " + accessory.getProduct_name());
     }
     public List<Instrument> getAllInstruments() {
-        List<Instrument> instruments = productDAO.getAllInstruments();
-        for (Instrument instrument : instruments) {
-            System.out.println("Instrument: " + instrument.getProduct_name() + ", Type: " + instrument.getInstrument_type() + ", Brand: " + instrument.getInstrument_brand());
-        }
-        return instruments;}
+        return getAllProducts("instrument", Instrument.class);
     }
+
+    public List<Accessory> getAllAccessories() {
+        return getAllProducts("accessory", Accessory.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T extends Product> List<T> getAllProducts(String type, Class<T> clazz) {
+        List<T> products;
+        if (type.equalsIgnoreCase("instrument")) {
+            products = (List<T>) productDAO.getAllInstruments();
+        } else if (type.equalsIgnoreCase("accessory")) {
+            products = (List<T>) productDAO.getAllAccessories();
+        } else {
+            return Collections.emptyList();
+        }
+
+        if (products.isEmpty()) {
+            System.out.println("No " + type + "s found in inventory.");
+        } else {
+            System.out.println("--- Current " + type.toUpperCase() + "S ---");
+            for (T product : products) {
+                System.out.println(product);
+            }
+        }
+        return products;
+    }
+}
 
 
 
