@@ -1,61 +1,47 @@
 package com.finalreview.musicstore;
 
+import com.finalreview.musicstore.invoice.Invoice;
+import com.finalreview.musicstore.invoice.InvoiceService;
 import com.finalreview.musicstore.product.Accessory;
 import com.finalreview.musicstore.product.Instrument;
-import com.finalreview.musicstore.product.ProductDAO;
+import com.finalreview.musicstore.product.Product;
 import com.finalreview.musicstore.product.ProductService;
 import com.finalreview.musicstore.user.Customer;
-import com.finalreview.musicstore.user.Employee;
 import com.finalreview.musicstore.user.User;
 import com.finalreview.musicstore.user.UserService;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class MusicStoreTest {
     public static final UserService userService = new UserService();
     public static final ProductService productService = new ProductService();
+    public static final InvoiceService invoiceService = new InvoiceService();
+
     public static void main(String[] args) throws SQLException {
+        System.out.println("--- Running Invoice Feature Test ---");
+        testInvoiceFeature();
+        System.out.println("--- Invoice Feature Test Complete ---\n");
 
-
-//        // Customer user = new Customer("username3", "password4", "j@j3.com");
-//        Employee emp2 = new Employee("username4", "password5", "emp@emp.com");
-//
-//        userService.saveNewUser(emp2);
-//
-//        Instrument instrument = new Instrument("Fender Strat","6 String Fender Electric",1199.00,30,"Guitar","Fender",6,"Black");
-//        Accessory accessory = new Accessory("Guitar Strings","D'Addario Nickel Wound",9.99,100,"Strings","D'Addario");
-//
-//        System.out.println("\n--- Testing Product Persistence ---");
-//
-//
-//        System.out.println("\n--- Testing Generic Retrieval ---");
-//        // Test fetching all instruments
-//        productService.getAllInstruments();
-//
-//        // Test fetching all accessories
-//        productService.getAllAccessories();
-
-        // RBAC
-        User user = null;
         Scanner scanner = new Scanner(System.in);
-
         displayWelcomeMenu(scanner);
     }
 
     private static void displayWelcomeMenu(Scanner scanner) {
         boolean running = true;
-        while(running){
+        while (running) {
             System.out.println("\n--- Welcome to the Music Store ---");
             System.out.println("Please select an option:");
             System.out.println("1. Login");
             System.out.println("2. Register");
             System.out.println("3. Exit");
             int choice = scanner.nextInt();
-            try{
-                switch (choice){
+            try {
+                switch (choice) {
                     case 1:
-                       loginMenu(scanner);
+                        loginMenu(scanner);
                         break;
                     case 2:
                         registerMenu(scanner);
@@ -64,7 +50,7 @@ public class MusicStoreTest {
                         System.out.println("Exiting...");
                         running = false;
                 }
-            } catch (Exception e){
+            } catch (Exception e) {
                 System.out.println("Invalid input. Please enter a number between 1 and 3.");
                 scanner.nextLine();
             }
@@ -72,8 +58,6 @@ public class MusicStoreTest {
     }
 
     private static void registerMenu(Scanner scanner) {
-        // Username, email, passwiord and role
-
         System.out.println("--- Register New User ---");
         System.out.print("Enter username: ");
         String username = scanner.next();
@@ -84,53 +68,47 @@ public class MusicStoreTest {
         System.out.print("Enter role (customer/employee): ");
         String role = scanner.next();
 
-        if(role.equalsIgnoreCase("customer") || role.equalsIgnoreCase("employee")){
+        if (role.equalsIgnoreCase("customer") || role.equalsIgnoreCase("employee")) {
             User user = new User(username, password, email, role);
             userService.saveNewUser(user);
             System.out.println("User registered successfully!");
         }
-
     }
 
     private static void loginMenu(Scanner scanner) throws SQLException {
-
         System.out.println("--- User Login ---");
         System.out.print("Enter username: ");
         String username = scanner.next();
         System.out.print("Enter password: ");
         String password = scanner.next();
         User user = userService.logInToSystem(username, password);
-        loginRoleCheck(user,scanner);
+        loginRoleCheck(user, scanner);
     }
 
     private static void loginRoleCheck(User user, Scanner scanner) {
-        if(user !=null && user.getRole().equalsIgnoreCase("CUSTOMER")){
+        if (user != null && user.getRole().equalsIgnoreCase("CUSTOMER")) {
             customerMenu(scanner);
-        } else if(user != null && user.getRole().equalsIgnoreCase("EMPLOYEE")){
+        } else if (user != null && user.getRole().equalsIgnoreCase("EMPLOYEE")) {
             employeeMenu(scanner);
         }
     }
 
     private static void employeeMenu(Scanner scanner) {
-        // Search for prouct in stock ( name, type, price, colour)
-        // REmove customer from system
-        // Get total value of inventory ( sum of all products including number in stock)
         boolean inEmployeeMenu = true;
-        while(inEmployeeMenu){
+        while (inEmployeeMenu) {
             System.out.println("--- Employee Menu ---");
             System.out.println("1. Add New Product");
             System.out.println("2. View Products");
             System.out.println("3. Add New Customer");
             System.out.println("4. Exit");
             int choice = scanner.nextInt();
-            switch (choice){
+            switch (choice) {
                 case 1:
                     createProductMenu(scanner);
                     break;
                 case 2:
                     viewProductMenu(scanner);
                     break;
-
                 case 3:
                     addingCustomerMenu(scanner);
                     break;
@@ -139,8 +117,6 @@ public class MusicStoreTest {
                     inEmployeeMenu = false;
             }
         }
-
-        System.out.println("--- Employee Menu ---");
     }
 
     private static void addingCustomerMenu(Scanner scanner) {
@@ -162,7 +138,7 @@ public class MusicStoreTest {
         System.out.println("2. View All Accessories");
         System.out.println("3. Back to Employee Menu");
         int choice = scanner.nextInt();
-        switch (choice){
+        switch (choice) {
             case 1:
                 productService.getAllInstruments();
                 break;
@@ -178,7 +154,7 @@ public class MusicStoreTest {
         System.out.println("2. Add New Accessory");
         System.out.println("3. Back to Employee Menu");
         int choice = scanner.nextInt();
-        switch (choice){
+        switch (choice) {
             case 1:
                 System.out.println("Enter instrument name: ");
                 String instrumentName = scanner.next();
@@ -192,7 +168,7 @@ public class MusicStoreTest {
                 String instrumentType = scanner.next();
                 System.out.println("Enter instrument brand: ");
                 String instrumentBrand = scanner.next();
-                System.out.println("Enter number of strings (if applicable, else enter 0): ");
+                System.out.println("Enter number of strings: ");
                 int numberOfStrings = scanner.nextInt();
                 System.out.println("Enter instrument color: ");
                 String instrumentColor = scanner.next();
@@ -201,7 +177,7 @@ public class MusicStoreTest {
                 break;
             case 2:
                 System.out.println("Enter accessory name: ");
-                String accessoryName = scanner.nextLine();
+                String accessoryName = scanner.next();
                 System.out.println("Enter accessory description: ");
                 String accessoryDescription = scanner.next();
                 System.out.println("Enter accessory price: ");
@@ -215,30 +191,38 @@ public class MusicStoreTest {
                 Accessory newAccessory = new Accessory(accessoryName, accessoryDescription, accessoryPrice, accessoryStock, accessoryType, accessoryBrand);
                 productService.saveAccessory(newAccessory);
                 break;
-
         }
     }
 
     private static void customerMenu(Scanner scanner) {
         System.out.println("--- Customer Menu ---");
-        // search products by name, type, price, colour
-        // Purchase products
-        // View All Products
-        // View Products By Catergory
-        // Purchase Product
-        // View Order History
+    }
 
+    private static void testInvoiceFeature() {
+        User customer = new User("test_customer_" + System.currentTimeMillis(), "pass", "cust@test.com", "CUSTOMER");
+        User employee = new User("test_employee_" + System.currentTimeMillis(), "pass", "emp@test.com", "EMPLOYEE");
+        
+        userService.saveNewUser(customer);
+        userService.saveNewUser(employee);
+        
+        Instrument guitar = new Instrument("Gibson Les Paul", "Electric Guitar", 2499.00, 5, "Guitar", "Gibson", 6, "Heritage Cherry");
+        Accessory picks = new Accessory("Fender Picks", "Medium Picks 12pk", 12.99, 100, "Picks", "Fender");
+        
+        productService.saveInstrument(guitar);
+        productService.saveAccessory(picks);
+        
+        List<Product> purchasedItems = new ArrayList<>();
+        purchasedItems.add(guitar);
+        purchasedItems.add(picks);
+        
+        System.out.println("Processing purchase for customer ID: " + customer.getUserId());
+        Invoice invoice = invoiceService.processPurchase(customer.getUserId(), employee.getUserId(), purchasedItems);
+        
+        invoiceService.printInvoice(invoice);
+        if (invoice.getInvoice_id() > 0) {
+            System.out.println("SUCCESS: Invoice saved with ID " + invoice.getInvoice_id());
+        } else {
+            System.out.println("FAILURE: Invoice was not saved correctly.");
+        }
     }
 }
-
-
-// Final break down
-// basic RBAC (role based access control)
-// Manging data persistence with JDBC ( DAOS)
-// 3 layer architecture just cause its easier to navigate and seperates concerns
-// Writing to a file with file writer ( basic logger)
-// Keeping the repo clean and organized
-// See that you can write some SQL ( this brings in your DB course)
-// If working as a team or solo we like to see basic git workflow used
-// Building features for the program ( i.e searching, getting value of something, CRUD, report generation
-// Trello board for project management or GitHub board for project management

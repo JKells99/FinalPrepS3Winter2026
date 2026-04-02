@@ -26,7 +26,7 @@ public class ProductDAO {
             var rs = productStmt.executeQuery();
             if (rs.next()) {
                 int productId = rs.getInt("product_id");
-                ;
+                instrument.setProduct_id(productId);
                 // Save instrument details using the generated product_id
                 instrumentStmt.setInt(1, productId);
                 instrumentStmt.setString(2, instrument.getInstrument_type());
@@ -57,7 +57,7 @@ public class ProductDAO {
             var rs = productStmt.executeQuery();
             if (rs.next()) {
                 int productId = rs.getInt("product_id");
-                ;
+                accessory.setProduct_id(productId);
                 // Save accessory details using the generated product_id
                 accessoryStmt.setInt(1, productId);
                 accessoryStmt.setString(2, accessory.getAccessory_type());

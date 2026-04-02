@@ -81,13 +81,14 @@ public class Invoice {
 
     @Override
     public String toString() {
-        return "Invoice{" +
-                "invoice_id=" + invoice_id +
-                ", customer_id=" + customer_id +
-                ", employee_id=" + employee_id +
-                ", items=" + items +
-                ", total_amount=" + total_amount +
-                ", invoice_date=" + invoice_date +
-                '}';
+        final StringBuffer sb = new StringBuffer("Invoice{");
+        sb.append("invoice_id=").append(invoice_id);
+        sb.append(", customer_id=").append(customer_id);
+        sb.append(", employee_id=").append(employee_id);
+        sb.append(", items=").append(items);
+        sb.append(", total_amount=").append(total_amount);
+        sb.append(", invoice_date=").append(invoice_date);
+        sb.append('}');
+        return sb.toString();
     }
 }

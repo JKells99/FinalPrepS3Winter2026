@@ -7,18 +7,20 @@ import java.sql.SQLException;
 public class UserDAO {
 
     public void saveNewUserToDb(User user) {
-        String sql = "INSERT INTO users(username, password, email, role) VALUES (?,?,?,?)";
+        String sql = "INSERT INTO users(username, password, email, role) VALUES (?,?,?,?) RETURNING user_id";
         try (var connection = DBConnection.getConnection();
              var preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, user.getUsername());
             preparedStatement.setString(2, user.getPassword());
             preparedStatement.setString(3, user.getEmail());
             preparedStatement.setString(4, user.getRole());
-            preparedStatement.executeUpdate();
+            
+            var rs = preparedStatement.executeQuery();
+            if (rs.next()) {
+                user.setUserId(rs.getInt("user_id"));
+            }
         } catch (Exception e) {
             e.printStackTrace();
-            String message = "Error saving user to database In DAO";
-
         }
     }
 
